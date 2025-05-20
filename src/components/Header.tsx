@@ -3,21 +3,16 @@
 import styles from './Header.module.css';
 import Link from 'next/link';
 import { Pacifico } from 'next/font/google';
-import { Dispatch, SetStateAction } from 'react';
+import { useSearch } from "./SearchContext";
 
 const pacifico = Pacifico({
   subsets: ['vietnamese'],
   weight: '400',
 });
 
-// 👉 THÊM props interface
-interface HeaderProps {
-  searchTerm: string;
-  setSearchTerm: Dispatch<SetStateAction<string>>;
-}
+export default function Header() {
+  const { searchTerm, setSearchTerm } = useSearch(); // Sử dụng context
 
-// 👉 NHẬN props
-export default function Header({ searchTerm, setSearchTerm }: HeaderProps) {
   return (
     <header className={styles.header}>
       <nav className={styles.nav}>
@@ -31,19 +26,18 @@ export default function Header({ searchTerm, setSearchTerm }: HeaderProps) {
             type="text"
             placeholder="Tìm kiếm món ăn..."
             className={styles.searchInput}
-            value={searchTerm} // 👉 giá trị hiện tại
-            onChange={(e) => setSearchTerm(e.target.value)} // 👉 cập nhật khi gõ
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className={styles.navLinks}>
-          <Link href="/cart" className={styles.navLink}>
-            Cart
+          <Link href="/register" className={styles.navButton}>
+            <span className={styles.icon}>✍️</span>
+            <span className={styles.buttonText}>Đăng ký</span>
           </Link>
-          <Link href="/order" className={styles.navLink}>
-            Order
-          </Link>
-          <Link href="/profile" className={styles.navLink}>
-            Profile
+          <Link href="/login" className={styles.navButton}>
+            <span className={styles.icon}>🔑</span>
+            <span className={styles.buttonText}>Đăng nhập</span>
           </Link>
         </div>
       </nav>

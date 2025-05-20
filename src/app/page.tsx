@@ -2,16 +2,17 @@
 
 import styles from './page.module.css';
 import { useEffect, useState } from "react";
-import { getCategory } from "./services/category.service";
-import { getFood } from "./services/food.service";
-import Header from './components/Header';
+import { getCategory } from "../services/category.service";
+import { getFood } from "../services/food.service";
 import Link from 'next/link';
+import { useSearch } from "@/components/SearchContext";
 
 export default function Home() {
+  const { searchTerm } = useSearch(); // Chỉ sử dụng searchTerm từ context
   const [categories, setCategories] = useState<Category[]>([]);
   const [foods, setFoods] = useState<Food[]>([]);
   const [currentCategoryID, setCurrentCategoryID] = useState<string | undefined>(undefined);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [allFoods, setAllFoods] = useState<Food[]>([]); // Thêm state để lưu tất cả món ăn
 
   useEffect(() => {
     async function fetchDataCategories() {
@@ -28,18 +29,26 @@ export default function Home() {
     async function fetchDataFood() {
       if (currentCategoryID) {
         const foodList = await getFood(currentCategoryID);
-        const filteredFoods = foodList.filter(food =>
-          food.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFoods(filteredFoods);
+        setAllFoods(foodList); // Lưu tất cả món ăn
+        // Filter sẽ được xử lý trong useEffect riêng
       }
     }
     fetchDataFood();
-  }, [currentCategoryID, searchTerm]);
+  }, [currentCategoryID]);
+
+  // Effect riêng để xử lý filter khi searchTerm thay đổi
+  useEffect(() => {
+    if (allFoods.length > 0) {
+      const filteredFoods = allFoods.filter(food =>
+        food.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFoods(filteredFoods);
+    }
+  }, [searchTerm, allFoods]);
+
 
   return (
     <>
-      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className={styles.bannerContainer}>
         <img 
           src="https://www.gopalnamkeen.com/storage/product_gallary_images/1719033292-2024-06-22%2010-44-54.jpg" 

@@ -1,4 +1,4 @@
-import { getFoodDetail } from "@/app/services/food.service";
+import { getFoodDetail } from "@/services/food.service";
 import Image from "next/image";
 
 export default async function FoodDetailPage({ params }: { params: { id: string } }) {
