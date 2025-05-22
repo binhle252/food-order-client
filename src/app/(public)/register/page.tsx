@@ -1,15 +1,40 @@
 "use client";
-import React, { useState } from 'react';
+
+import React, { useState } from "react";
+import { register } from "@/services/account.service"; // Đường dẫn cần đúng
+import { useRouter } from "next/navigation";
 
 const RegisterPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    address: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Xử lý logic đăng ký ở đây
-    console.log('Register attempt:', { email, password, confirmPassword });
+    if (form.password !== form.confirmPassword) {
+      alert("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    try {
+      const result = await register({
+        username: form.username,
+        password: form.password,
+        phone: form.phone,
+        address: form.address,
+      });
+
+      alert(result.message || "Đăng ký thành công!");
+      router.push("/login");
+    } catch (error: any) {
+      alert(error.message || "Đăng ký thất bại");
+    }
   };
 
   return (
@@ -18,47 +43,63 @@ const RegisterPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Đăng Ký</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="email">
-              Email
-            </label>
+            <label className="block text-gray-700 mb-2">Username</label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={form.username}
+              onChange={(e) => setForm({ ...form, username: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Nhập email của bạn"
+              placeholder="Tên đăng nhập"
               required
             />
           </div>
+
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="password">
-              Mật khẩu
-            </label>
+            <label className="block text-gray-700 mb-2">Mật khẩu</label>
             <input
               type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Nhập mật khẩu"
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2" htmlFor="confirm-password">
-              Xác nhận mật khẩu
-            </label>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Xác nhận mật khẩu</label>
             <input
               type="password"
-              id="confirm-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={form.confirmPassword}
+              onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Xác nhận mật khẩu"
               required
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Số điện thoại</label>
+            <input
+              type="text"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Số điện thoại"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-gray-700 mb-2">Địa chỉ</label>
+            <input
+              type="text"
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Địa chỉ"
+            />
+          </div>
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
