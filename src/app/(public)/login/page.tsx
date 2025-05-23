@@ -20,9 +20,9 @@ export default function LoginPage() {
 
       // Chuyển hướng sau khi đăng nhập
       if (res.data.role === "admin") {
-        router.push("/(admin)/dashboard");
+        router.push("/foods");
       } else {
-        router.push("/(user)/cart");
+        router.push("/user-home");
       }
     } catch (err: any) {
       alert(err.message || "Đăng nhập thất bại");
