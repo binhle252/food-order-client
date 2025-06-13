@@ -1,52 +1,86 @@
 "use client";
 
-import React, { useState } from "react";
-import { login } from "@/services/account.service";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { login as loginAPI } from "@/services/account.service"; // ✅ đổi tên login để tránh trùng
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
+  const { login } = useAuth(); // ✅ login của context
   const router = useRouter();
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
 
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const res = await login(form);
-      alert(res.message);
+    setError("");
 
-      // Chuyển hướng sau khi đăng nhập
-      if (res.data.role === "admin") {
+    try {
+      const result = await loginAPI(formData);
+      console.log("Login result in component:", result);
+      const token = result?.data?.token;
+      const role = result?.data?.role;
+
+
+      console.log("Role:", role);
+
+      if (!token || !role) {
+        throw new Error("Token hoặc role không hợp lệ từ phản hồi API");
+      }
+
+      // Cập nhật vào context
+      login(token, role);
+
+      // Điều hướng
+      if (role === "admin") {
         router.push("/foods");
       } else {
         router.push("/user-home");
       }
+
     } catch (err: any) {
-      alert(err.message || "Đăng nhập thất bại");
+      setError(err?.message || "Đăng nhập thất bại");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Đăng nhập</h2>
-      <input
-        className="border p-2 rounded"
-        type="text"
-        placeholder="Username"
-        onChange={(e) => setForm({ ...form, username: e.target.value })}
-      />
-      <input
-        className="border p-2 rounded"
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
-      />
-      <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-        Đăng nhập
-      </button>
-    </form>
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
+      <h1 className="text-2xl font-bold mb-4">Đăng nhập</h1>
+      {error && <p className="text-red-500 mb-3">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block">Tên đăng nhập</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block">Mật khẩu</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Đăng nhập
+        </button>
+      </form>
+    </div>
   );
 }

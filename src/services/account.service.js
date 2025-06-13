@@ -44,14 +44,22 @@ export async function register(accountData) {
 export async function login(loginData) {
   try {
     const result = await api.post("/accounts/login", loginData);
-    const { token } = result.data.data;
+    console.log("Login API result:", result.data);
+
+    // Lấy token và role đúng
+    const { token, role } = result.data.data;
+
+    // Lưu token & role vào localStorage
     localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+
     return result.data;
   } catch (error) {
     console.error("Lỗi khi đăng nhập:", error.response?.data?.message || error.message);
     throw error.response?.data || error;
   }
 }
+
 
 export async function getAccounts() {
   try {

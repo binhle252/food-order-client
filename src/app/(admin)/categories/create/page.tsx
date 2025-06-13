@@ -12,7 +12,7 @@ export default function CreateCategoryPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createCategory({ name, img });
-    router.push("/categories");
+    router.push("/foods");
   };
 
   return (

@@ -1,9 +1,11 @@
+// app/layout.tsx
+
 import Link from "next/link";
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { SearchProvider } from "@/components/SearchContext";
-//import { AuthProvider } from "@/components/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata = {
   title: "Food Order App",
@@ -14,13 +16,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <SearchProvider>
-          <Header />
-          <main className="pt-[var(--header-height)]">
-            {children}
-          </main>
-          <Footer />
-        </SearchProvider>
+        <AuthProvider> {/* ✅ AuthProvider bọc tất cả */}
+          <SearchProvider>
+            <Header />
+            <main className="pt-[var(--header-height)]">{children}</main>
+            <Footer />
+          </SearchProvider>
+        </AuthProvider>
       </body>
     </html>
   );

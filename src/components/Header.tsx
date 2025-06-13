@@ -4,7 +4,7 @@ import styles from './Header.module.css';
 import Link from 'next/link';
 import { Pacifico } from 'next/font/google';
 import { useSearch } from "./SearchContext";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext"; // dùng context
 
 const pacifico = Pacifico({
   subsets: ['vietnamese'],
@@ -13,19 +13,11 @@ const pacifico = Pacifico({
 
 export default function Header() {
   const { searchTerm, setSearchTerm } = useSearch();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Kiểm tra trạng thái đăng nhập - thay đổi theo cách bạn lưu token
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-  }, []);
+  const { isLoggedIn, role, logout } = useAuth(); // lấy từ context
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // hoặc session info
-    setIsLoggedIn(false);
-    window.location.href = '/'; // điều hướng lại nếu cần
+    logout(); // gọi logout context
+    window.location.href = "/"; // redirect sau khi logout
   };
 
   return (
@@ -57,12 +49,21 @@ export default function Header() {
                 <span className={styles.buttonText}>Đăng nhập</span>
               </Link>
             </>
+          ) : role === "admin" ? (
+            <>
+              <Link href="/admin/dashboard" className={styles.navButton}>
+                🛠 Quản trị
+              </Link>
+              <button onClick={handleLogout} className={styles.navButton}>
+                🚪 Đăng xuất
+              </button>
+            </>
           ) : (
             <>
-              <Link href="/(user)/cart" className={styles.navButton}>
+              <Link href="/cart" className={styles.navButton}>
                 🛒 Giỏ hàng
               </Link>
-              <Link href="/(user)/profile" className={styles.navButton}>
+              <Link href="/profile" className={styles.navButton}>
                 👤 Hồ sơ
               </Link>
               <button onClick={handleLogout} className={styles.navButton}>
