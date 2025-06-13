@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       // Điều hướng
       if (role === "admin") {
-        router.push("/foods");
+        router.push("/dashboard");
       } else {
         router.push("/user-home");
       }

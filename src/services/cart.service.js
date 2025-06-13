@@ -12,7 +12,7 @@ export async function addToCart(cartData) {
 
 export async function getCart(account_id) {
   try {
-    const result = await axios.get(`http://localhost:5000/api/cart/${account_id}`);
+    const result = await axios.get(`http://localhost:5000/api/cart/account/${account_id}`);
     return result.data;
   } catch (error) {
     console.error("Lỗi khi lấy giỏ hàng:", error);
@@ -22,7 +22,7 @@ export async function getCart(account_id) {
 
 export async function deleteItem(account_id, item_id) {
   try {
-    const result = await axios.delete(`http://localhost:5000/api/cart/${account_id}/items/${item_id}`);
+    const result = await axios.delete(`http://localhost:5000/api/cart/account/${account_id}/item/${item_id}`);
     return result.data;
   } catch (error) {
     console.error("Lỗi khi xóa món ăn khỏi giỏ hàng:", error);
@@ -32,7 +32,7 @@ export async function deleteItem(account_id, item_id) {
 
 export async function updateItem(account_id, item_id, quantity) {
   try {
-    const result = await axios.put(`http://localhost:5000/api/cart/${account_id}/items/${item_id}`, { quantity });
+    const result = await axios.put(`http://localhost:5000/api/cart/account/${account_id}/item/${item_id}`, { quantity });
     return result.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật món ăn trong giỏ hàng:", error);
