@@ -86,6 +86,7 @@ const RegisterPage: React.FC = () => {
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Số điện thoại"
+              required
             />
           </div>
 
@@ -97,6 +98,7 @@ const RegisterPage: React.FC = () => {
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Địa chỉ"
+              required
             />
           </div>
 

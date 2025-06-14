@@ -51,7 +51,7 @@ export default function Header() {
             </>
           ) : role === "admin" ? (
             <>
-              <Link href="/admin/dashboard" className={styles.navButton}>
+              <Link href="/dashboard" className={styles.navButton}>
                 🛠 Quản trị
               </Link>
               <button onClick={handleLogout} className={styles.navButton}>

@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }) {
             </li>
             <li>
               <Link
-                href="/order"
+                href="/dashboard/order"
                 className="block p-2 rounded hover:bg-gray-700"
               >
                 Quản lý đơn hàng

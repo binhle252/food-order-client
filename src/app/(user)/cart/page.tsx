@@ -8,6 +8,12 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [message, setMessage] = useState("");
   const [accountId, setAccountId] = useState<string | null>(null);
+  const [cartId, setCartId] = useState<string | null>(null);
+
+  const [customer, setCustomer] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("On delivery");
 
   const getAccountIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -31,6 +37,7 @@ export default function CartPage() {
       const cart = await getCart(accId);
       const validItems = (cart.items || []).filter((item: any) => item.food !== null);
       setCartItems(validItems);
+      setCartId(cart._id); // Lưu lại cart_id để gửi khi thanh toán
     } catch (err) {
       setMessage("Không thể tải giỏ hàng.");
     }
@@ -60,7 +67,49 @@ export default function CartPage() {
     }
   };
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.food.price * item.quantity), 0);
+  const handleCheckout = async () => {
+    if (!accountId || !cartItems.length || !cartId) return;
+
+    if (!customer || !phone || !address) {
+      setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer,
+          phone,
+          address,
+          payment_method: paymentMethod,
+          total_money: totalPrice,
+          cart_id: cartId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("✅ Đặt hàng thành công!");
+        setCartItems([]);
+        setCustomer("");
+        setPhone("");
+        setAddress("");
+      } else {
+        setMessage(data.message || "Lỗi khi đặt hàng.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thanh toán:", error);
+      setMessage("Đã xảy ra lỗi khi đặt hàng.");
+    }
+  };
+
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + item.food.price * item.quantity,
+    0
+  );
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4">
@@ -78,35 +127,93 @@ export default function CartPage() {
                 className="border p-4 rounded shadow flex justify-between items-center"
               >
                 <div className="flex items-center space-x-4">
-                  <img src={item.food.img} alt={item.food.name} className="w-16 h-16 object-cover rounded" />
+                  <img
+                    src={item.food.img}
+                    alt={item.food.name}
+                    className="w-16 h-16 object-cover rounded"
+                  />
                   <div>
                     <h2 className="font-semibold">{item.food.name}</h2>
-                    <p className="text-gray-600">{item.food.price.toLocaleString()}đ</p>
+                    <p className="text-gray-600">
+                      {item.food.price.toLocaleString()}đ
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => handleUpdate(item._id, item.quantity - 1)}
+                    onClick={() =>
+                      handleUpdate(item._id, item.quantity - 1)
+                    }
                     className="px-2 py-1 bg-gray-200 rounded"
-                  >-</button>
+                  >
+                    -
+                  </button>
                   <span>{item.quantity}</span>
                   <button
-                    onClick={() => handleUpdate(item._id, item.quantity + 1)}
+                    onClick={() =>
+                      handleUpdate(item._id, item.quantity + 1)
+                    }
                     className="px-2 py-1 bg-gray-200 rounded"
-                  >+</button>
+                  >
+                    +
+                  </button>
                   <button
                     onClick={() => handleDelete(item._id)}
                     className="ml-4 text-red-500"
-                  >Xóa</button>
+                  >
+                    Xóa
+                  </button>
                 </div>
               </li>
             ))}
           </ul>
 
-          {/* Tổng tiền */}
+          {/* Thông tin giao hàng */}
+          <div className="my-6 space-y-3">
+            <input
+              type="text"
+              placeholder="Tên khách hàng"
+              value={customer}
+              onChange={(e) => setCustomer(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Số điện thoại"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Địa chỉ giao hàng"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+              required
+            />
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            >
+              <option value="On delivery">Thanh toán khi nhận hàng</option>
+              <option value="Online">Thanh toán online</option>
+            </select>
+          </div>
+
+          {/* Tổng tiền + Nút thanh toán */}
           <div className="mt-6 text-right text-lg font-semibold">
             Tổng tiền: {totalPrice.toLocaleString()}đ
           </div>
+          <button
+            onClick={handleCheckout}
+            className="mt-3 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Thanh toán
+          </button>
         </div>
       )}
     </div>

@@ -31,11 +31,14 @@ export async function deleteItem(account_id, item_id) {
 }
 
 export async function updateItem(account_id, item_id, quantity) {
+  const url = `http://localhost:5000/api/cart/account/${account_id}/item/${item_id}`;
+  console.log("🛠 Gọi API update:", url, "với quantity:", quantity);
   try {
-    const result = await axios.put(`http://localhost:5000/api/cart/account/${account_id}/item/${item_id}`, { quantity });
+    const result = await axios.patch(url, { quantity });
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật món ăn trong giỏ hàng:", error);
+    console.error("❌ Lỗi updateItem:", error.response?.data || error.message);
     throw error;
   }
 }
+
