@@ -31,3 +31,13 @@ export async function getOrderByAccount(account_id) {
     throw error;
   }
 }
+
+export async function updateOrderStatus(id, statusData) {
+  try {
+    const result = await axios.put(`http://localhost:5000/api/order/${id}/status`, statusData);
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+    throw error;
+  }
+}

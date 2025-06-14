@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getOrder } from "@/services/order.service";
+import { getOrder, updateOrderStatus } from "@/services/order.service";
 
 interface Order {
   _id: string;
@@ -25,6 +25,7 @@ interface Order {
 }
 
 const ORDERS_PER_PAGE = 5;
+const STATUS_OPTIONS = ["pending", "confirm", "shipping", "received"];
 
 export default function AdminRecentOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -34,8 +35,9 @@ export default function AdminRecentOrdersPage() {
   const fetchRecentOrders = async () => {
     try {
       const data = await getOrder({});
-      const sorted = data
-        .sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const sorted = data.sort(
+        (a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
       setOrders(sorted);
     } catch (err) {
       console.error("Lỗi khi lấy đơn hàng:", err);
@@ -47,19 +49,25 @@ export default function AdminRecentOrdersPage() {
     fetchRecentOrders();
   }, []);
 
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      await updateOrderStatus(orderId, { status: newStatus });
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error("Lỗi khi cập nhật trạng thái:", err);
+      setMessage("Cập nhật trạng thái thất bại.");
+    }
+  };
+
   const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
   const currentOrders = orders.slice(
     (currentPage - 1) * ORDERS_PER_PAGE,
     currentPage * ORDERS_PER_PAGE
   );
-
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
 
   return (
     <div className="max-w-5xl mx-auto mt-10 p-4">
@@ -78,7 +86,22 @@ export default function AdminRecentOrdersPage() {
                   <div>
                     <p className="font-semibold">🆔 {order._id}</p>
                     <p>👤 {order.customer}</p>
-                    <p>📦 Trạng thái: <span className="font-semibold">{order.status}</span></p>
+                    <p>📞 {order.phone}</p>
+                    <p>🏠 {order.address}</p>
+                    <div className="mt-1">
+                      <label className="mr-2 font-medium">📦 Trạng thái:</label>
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        className="border px-2 py-1 rounded"
+                      >
+                        {STATUS_OPTIONS.map((option) => (
+                          <option key={option} value={option}>
+                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-green-600">
@@ -105,7 +128,7 @@ export default function AdminRecentOrdersPage() {
           {/* Pagination */}
           <div className="mt-6 flex justify-center items-center space-x-4">
             <button
-              onClick={handlePrev}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
             >
@@ -113,7 +136,7 @@ export default function AdminRecentOrdersPage() {
             </button>
             <span>Trang {currentPage} / {totalPages}</span>
             <button
-              onClick={handleNext}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
             >
