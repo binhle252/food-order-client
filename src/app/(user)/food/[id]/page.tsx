@@ -1,9 +1,10 @@
 import { getFoodDetail } from "@/services/food.service";
 import Image from "next/image";
+import CommentsSection from "@/components/CommentsSection"; // ✅ import component bình luận
 
 export default async function FoodDetailPage({ params }: { params: { id: string } }) {
   const food = await getFoodDetail(params.id);
-  
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="grid md:grid-cols-2 gap-8">
@@ -25,6 +26,11 @@ export default async function FoodDetailPage({ params }: { params: { id: string 
             Thêm vào giỏ hàng
           </button>
         </div>
+      </div>
+
+      {/* 🗨️ Component bình luận */}
+      <div className="mt-10">
+        <CommentsSection foodId={food._id} />
       </div>
     </div>
   );
