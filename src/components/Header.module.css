@@ -4,13 +4,14 @@
   background-color: #f8f8f8;
   border-bottom: 1px solid #ddd;
   padding: 10px 20px;
-  position:sticky;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  --header-height: 60px; /* Thêm dòng này */
+  --header-height: 60px;
+  height: var(--header-height); /* Sử dụng biến chiều cao */
 }
 
 .nav {
@@ -24,7 +25,7 @@
 }
 
 .navLink {
-  font-size: 1.5rem;
+  font-size: 1.2rem; /* Giảm kích thước để phù hợp hơn */
   color: #333;
   text-decoration: none;
 }
@@ -49,6 +50,12 @@
   font-weight: 500;
   color: #222;
   background-color: #fff;
+  outline: none; /* Loại bỏ viền focus mặc định */
+  transition: border-color 0.3s ease; /* Thêm hiệu ứng mượt mà */
+}
+
+.searchInput:focus {
+  border-color: #007bff;
 }
 
 .navLinks {
@@ -59,31 +66,51 @@
 }
 
 .navButton {
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
   background-color: transparent;
-  border: 1px solid #888;
-  border-radius: 4px;
-  color: #333;
+  border: none;
+  border-radius: 50%;
+  color: #666; /* Màu chữ xám */
   text-decoration: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100px; /* Tăng chiều rộng để tránh đè lên nhau */
+  height: 40px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
-.navButton:hover {
-  border-color: #333;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+.navButton + .navButton {
+  margin-left: 15px; /* Tăng khoảng cách giữa các nút */
+  position: relative;
 }
 
-.icon {
-  font-size: 1.2rem;
+.navButton + .navButton::before {
+  content: '';
+  position: absolute;
+  left: -15px; /* Điều chỉnh vị trí dấu ngăn cách để đồng đều */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px; /* Giữ độ rộng đồng nhất */
+  height: 25px;
+  background-color: #999; /* Dấu ngăn cách màu đen */
+  border-radius:20%;
+}
+
+.navButton i {
+  font-size: 18px;
 }
 
 .buttonText {
-  font-size: 1rem;
+  font-size: 1.1rem; /* Tăng kích thước chữ */
   font-weight: 600;
   line-height: 1;
-  color: #333;
+  color: #666; /* Màu chữ xám */
   white-space: nowrap;
+}
+
+.buttonText:hover {
+  color: #999; /* Màu nhạt hơn khi hover text */
 }

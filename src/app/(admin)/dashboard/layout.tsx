@@ -45,6 +45,14 @@ export default function DashboardLayout({ children }) {
                 Quản lý đơn hàng
               </Link>
             </li>
+            <li>
+              <Link
+                href="/dashboard/revenue"
+                className="block p-2 rounded hover:bg-gray-700"
+              >
+                Thống kê doanh thu
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="p-4 border-t border-gray-700">

@@ -125,7 +125,7 @@ export default function Home() {
           <ul className={styles.foodList}>
             {foods.map((food) => (
               <li key={food._id} className={styles.foodItem}>
-                <Link href={`/foods/${food._id}`} passHref>
+                <Link href={`/food/${food._id}`} passHref>
                   <div className={styles.foodLinkWrapper}>
                     <img
                       src={food.img}

@@ -80,3 +80,13 @@ export async function getUserProfile() {
     throw error.response?.data || error;
   }
 }
+
+export async function updateUserProfile(data) {
+  try {
+    const result = await api.put("/accounts/profile", data);
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật thông tin cá nhân:", error.response?.data?.message || error.message);
+    throw error.response?.data || error;
+  }
+}

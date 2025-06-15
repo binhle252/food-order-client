@@ -64,7 +64,7 @@ export default function Header() {
                 🛒 Giỏ hàng
               </Link>
               <Link href="/profile" className={styles.navButton}>
-                👤 Hồ sơ
+                👤 Thông tin tài khoản
               </Link>
               <button onClick={handleLogout} className={styles.navButton}>
                 🚪 Đăng xuất
