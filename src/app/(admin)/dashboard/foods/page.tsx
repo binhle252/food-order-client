@@ -42,19 +42,39 @@ export default function AdminDashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {foods.map((food) => (
-              <tr key={food._id} className="border-b">
-                <td className="p-2">{food.name}</td>
-                <td className="p-2">{food.price.toLocaleString()}đ</td>
-                <td className="p-2">{food.address}</td>
-                <td className="p-2">{food.category_id.name}</td>
-                <td className="p-2">
-                  <Link href={`/dashboard/foods/edit/${food._id}`} className="text-blue-500 mr-2">Sửa</Link>
-                  <button onClick={() => handleDeleteFood(food._id)} className="text-red-500">Xóa</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {foods.map((food) => (
+    <tr key={food._id} className="border-b">
+      <td className="p-2">{food.name}</td>
+
+      {/* Giá món ăn */}
+      <td className="p-2">
+        {typeof food.price === "number"
+          ? food.price.toLocaleString("vi-VN") + "₫"
+          : "Chưa có giá"}
+      </td>
+
+      <td className="p-2">{food.address}</td>
+
+      {/* Danh mục: kiểm tra tồn tại category_id */}
+      <td className="p-2">
+        {food.category_id?.name ?? "Không có danh mục"}
+      </td>
+
+      <td className="p-2">
+        <Link href={`/dashboard/foods/edit/${food._id}`} className="text-blue-500 mr-2">
+          Sửa
+        </Link>
+        <button
+          onClick={() => handleDeleteFood(food._id)}
+          className="text-red-500"
+        >
+          Xóa
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </section>
 

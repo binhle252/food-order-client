@@ -18,6 +18,7 @@ export default function CommentsSection({ foodId }) {
     await createComment({ foodId, content });
     setContent("");
     fetchComments(); // refresh
+    console.log("Gửi bình luận cho món:", foodId, content);
   };
 
   useEffect(() => {

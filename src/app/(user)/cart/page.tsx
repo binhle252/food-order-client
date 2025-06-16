@@ -3,17 +3,29 @@
 import { useEffect, useState } from "react";
 import { getCart, deleteItem, updateItem } from "@/services/cart.service";
 import jwt from "jsonwebtoken";
+import Image from "next/image";
+
+interface CartItem {
+  _id: string;
+  quantity: number;
+  food: {
+    _id: string;
+    name: string;
+    price: number;
+    img: string;
+  };
+}
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [message, setMessage] = useState("");
   const [accountId, setAccountId] = useState<string | null>(null);
   const [cartId, setCartId] = useState<string | null>(null);
-
   const [customer, setCustomer] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("On delivery");
+  const baseUrl = "http://localhost:5000";
 
   const getAccountIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -24,6 +36,13 @@ export default function CartPage() {
     } catch (err) {
       return null;
     }
+  };
+
+  const encodeImageUrl = (img: string) => {
+    if (img?.startsWith("http")) return img;
+    if (!img) return "/default-image.jpg";
+    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
+    return `${baseUrl}${encodedPath}`;
   };
 
   const fetchCart = async () => {
@@ -37,7 +56,7 @@ export default function CartPage() {
       const cart = await getCart(accId);
       const validItems = (cart.items || []).filter((item: any) => item.food !== null);
       setCartItems(validItems);
-      setCartId(cart._id); // Lưu lại cart_id để gửi khi thanh toán
+      setCartId(cart._id);
     } catch (err) {
       setMessage("Không thể tải giỏ hàng.");
     }
@@ -69,12 +88,10 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (!accountId || !cartItems.length || !cartId) return;
-
     if (!customer || !phone || !address) {
       setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
       return;
     }
-
     try {
       const response = await fetch("http://localhost:5000/api/order", {
         method: "POST",
@@ -88,9 +105,7 @@ export default function CartPage() {
           cart_id: cartId,
         }),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setMessage("✅ Đặt hàng thành công!");
         setCartItems([]);
@@ -115,22 +130,23 @@ export default function CartPage() {
     <div className="max-w-2xl mx-auto mt-10 p-4">
       <h1 className="text-2xl font-bold mb-4">🛒 Giỏ hàng của bạn</h1>
       {message && <p className="text-red-500 mb-4">{message}</p>}
-
       {!cartItems.length ? (
         <p>Giỏ hàng trống.</p>
       ) : (
         <div>
           <ul className="space-y-4">
-            {cartItems.map((item: any) => (
+            {cartItems.map((item) => (
               <li
                 key={item._id}
                 className="border p-4 rounded shadow flex justify-between items-center"
               >
                 <div className="flex items-center space-x-4">
-                  <img
-                    src={item.food.img}
+                  <Image
+                    src={encodeImageUrl(item.food.img)}
                     alt={item.food.name}
-                    className="w-16 h-16 object-cover rounded"
+                    width={64}
+                    height={64}
+                    className="object-cover rounded"
                   />
                   <div>
                     <h2 className="font-semibold">{item.food.name}</h2>
@@ -141,18 +157,14 @@ export default function CartPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() =>
-                      handleUpdate(item._id, item.quantity - 1)
-                    }
+                    onClick={() => handleUpdate(item._id, item.quantity - 1)}
                     className="px-2 py-1 bg-gray-200 rounded"
                   >
                     -
                   </button>
                   <span>{item.quantity}</span>
                   <button
-                    onClick={() =>
-                      handleUpdate(item._id, item.quantity + 1)
-                    }
+                    onClick={() => handleUpdate(item._id, item.quantity + 1)}
                     className="px-2 py-1 bg-gray-200 rounded"
                   >
                     +
@@ -167,8 +179,6 @@ export default function CartPage() {
               </li>
             ))}
           </ul>
-
-          {/* Thông tin giao hàng */}
           <div className="my-6 space-y-3">
             <input
               type="text"
@@ -203,8 +213,6 @@ export default function CartPage() {
               <option value="Online">Thanh toán online</option>
             </select>
           </div>
-
-          {/* Tổng tiền + Nút thanh toán */}
           <div className="mt-6 text-right text-lg font-semibold">
             Tổng tiền: {totalPrice.toLocaleString()}đ
           </div>

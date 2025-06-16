@@ -2,12 +2,27 @@
 
 import styles from "../../page.module.css";
 import { useEffect, useState } from "react";
-import { getCategory } from "../../../services/category.service";
-import { getFood } from "../../../services/food.service";
+import { getCategory } from "@/services/category.service";
+import { getFood } from "@/services/food.service";
 import Link from "next/link";
 import { useSearch } from "@/components/SearchContext";
-import { addToCart } from "../../../services/cart.service";
+import { addToCart } from "@/services/cart.service";
 import jwt from "jsonwebtoken";
+import Image from "next/image";
+
+interface Category {
+  _id: string;
+  name: string;
+  img: string;
+}
+
+interface Food {
+  _id: string;
+  name: string;
+  price: number;
+  img: string;
+  address: string;
+}
 
 export default function Home() {
   const { searchTerm } = useSearch();
@@ -16,12 +31,12 @@ export default function Home() {
   const [currentCategoryID, setCurrentCategoryID] = useState<string | undefined>(undefined);
   const [allFoods, setAllFoods] = useState<Food[]>([]);
   const [message, setMessage] = useState<string>("");
+  const baseUrl = "http://localhost:5000"; // Base URL của backend
 
-  // Lấy account_id từ token (không verify)
+  // Lấy account_id từ token
   const getAccountIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token || typeof token !== "string") return null;
-
     try {
       const decoded: any = jwt.decode(token);
       if (typeof decoded !== "object" || decoded === null) return null;
@@ -34,10 +49,15 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchDataCategories() {
-      const cate = await getCategory();
-      setCategories(cate);
-      if (cate.length > 0) {
-        setCurrentCategoryID(cate[0]._id);
+      try {
+        const cate = await getCategory();
+        console.log("Categories:", cate); // Debug
+        setCategories(cate);
+        if (cate.length > 0) {
+          setCurrentCategoryID(cate[0]._id);
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
       }
     }
     fetchDataCategories();
@@ -46,8 +66,13 @@ export default function Home() {
   useEffect(() => {
     async function fetchDataFood() {
       if (currentCategoryID) {
-        const foodList = await getFood(currentCategoryID);
-        setAllFoods(foodList);
+        try {
+          const foodList = await getFood(currentCategoryID);
+          console.log("Foods:", foodList); // Debug
+          setAllFoods(foodList);
+        } catch (err) {
+          console.error("Error fetching foods:", err);
+        }
       }
     }
     fetchDataFood();
@@ -55,7 +80,7 @@ export default function Home() {
 
   useEffect(() => {
     if (allFoods.length > 0) {
-      const filteredFoods = allFoods.filter(food =>
+      const filteredFoods = allFoods.filter((food) =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFoods(filteredFoods);
@@ -70,7 +95,6 @@ export default function Home() {
       setTimeout(() => setMessage(""), 3000);
       return;
     }
-
     try {
       const cartData = { account_id: accountId, food_id: foodId, quantity: 1 };
       await addToCart(cartData);
@@ -86,9 +110,11 @@ export default function Home() {
   return (
     <>
       <div className={styles.bannerContainer}>
-        <img
+        <Image
           src="https://www.gopalnamkeen.com/storage/product_gallary_images/1719033292-2024-06-22%2010-44-54.jpg"
           alt="Banner ẩm thực"
+          width={1200}
+          height={400}
           className={styles.bannerImage}
         />
       </div>
@@ -96,7 +122,9 @@ export default function Home() {
       <div className={styles.container}>
         {/* Danh mục */}
         <section className={styles.categorySection}>
-          <h1 className={styles.categoryTitle}><i className="fas fa-bars"></i> Danh mục món ăn</h1>
+          <h1 className={styles.categoryTitle}>
+            <i className="fas fa-bars"></i> Danh mục món ăn
+          </h1>
           <ul className={styles.categoryList}>
             {categories.map((category) => (
               <li
@@ -108,9 +136,17 @@ export default function Home() {
                     : styles.inactiveCategory
                 }`}
               >
-                <img
-                  src={category.img}
+                <Image
+                  src={
+                    category.img?.startsWith("http")
+                      ? category.img
+                      : category.img
+                      ? `${baseUrl}${category.img}`
+                      : "/default-image.jpg"
+                  }
                   alt={category.name || "Ảnh danh mục"}
+                  width={100}
+                  height={100}
                   className={styles.categoryImage}
                 />
                 <h2 className={styles.categoryName}>{category.name}</h2>
@@ -121,21 +157,33 @@ export default function Home() {
 
         {/* Món ăn */}
         <section className={styles.foodSection}>
-          <h2 className={styles.foodTitle}><i className="fas fa-utensils"></i> Món ăn</h2>
+          <h2 className={styles.foodTitle}>
+            <i className="fas fa-utensils"></i> Món ăn
+          </h2>
           <ul className={styles.foodList}>
             {foods.map((food) => (
               <li key={food._id} className={styles.foodItem}>
                 <Link href={`/food/${food._id}`} passHref>
                   <div className={styles.foodLinkWrapper}>
-                    <img
-                      src={food.img}
-                      alt={food.name}
+                    <Image
+                      src={
+                        food.img?.startsWith("http")
+                          ? food.img
+                          : food.img
+                          ? `${baseUrl}${food.img}`
+                          : "/default-image.jpg"
+                      }
+                      alt={food.name || "Món ăn"}
+                      width={200}
+                      height={200}
                       className={styles.foodImage}
                     />
                     <h3 className={styles.foodName}>{food.name}</h3>
                   </div>
                 </Link>
-                <p className={styles.foodPrice}>💰 {food.price ? food.price.toLocaleString() + "đ" : "N/A"}</p>
+                <p className={styles.foodPrice}>
+                  💰 {food.price ? food.price.toLocaleString() + "đ" : "N/A"}
+                </p>
                 <p className={styles.foodAddress}>📍 {food.address}</p>
                 <button
                   onClick={() => handleAddToCart(food._id)}

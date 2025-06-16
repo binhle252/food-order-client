@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getOrderByAccount } from "@/services/order.service";
 import jwt from "jsonwebtoken";
+import Image from "next/image";
 
 interface Order {
   _id: string;
@@ -28,6 +29,14 @@ interface Order {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [message, setMessage] = useState("");
+  const baseUrl = "http://localhost:5000";
+
+  const encodeImageUrl = (img: string) => {
+    if (img?.startsWith("http")) return img;
+    if (!img) return "/default-image.jpg";
+    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
+    return `${baseUrl}${encodedPath}`;
+  };
 
   const getAccountIdFromToken = () => {
     const token = localStorage.getItem("token");
@@ -46,14 +55,13 @@ export default function OrdersPage() {
       setMessage("Vui lòng đăng nhập.");
       return;
     }
-
     try {
-  const data = await getOrderByAccount(accountId);
-  setOrders(data); // thành công, gán luôn
-} catch (error) {
-  console.error("Lỗi khi lấy đơn hàng:", error);
-  setMessage("Lỗi kết nối đến máy chủ.");
-}
+      const data = await getOrderByAccount(accountId);
+      setOrders(data);
+    } catch (error) {
+      console.error("Lỗi khi lấy đơn hàng:", error);
+      setMessage("Lỗi kết nối đến máy chủ.");
+    }
   };
 
   useEffect(() => {
@@ -63,9 +71,7 @@ export default function OrdersPage() {
   return (
     <div className="max-w-3xl mx-auto mt-10 p-4">
       <h1 className="text-2xl font-bold mb-6">📦 Lịch sử đơn hàng</h1>
-
       {message && <p className="text-red-500 mb-4">{message}</p>}
-
       {orders.length === 0 ? (
         <p>Chưa có đơn hàng nào.</p>
       ) : (
@@ -86,22 +92,24 @@ export default function OrdersPage() {
               <div>
                 <p className="mb-2">📍 Giao đến: {order.customer}, {order.phone}, {order.address}</p>
                 <ul className="space-y-2">
-  {order.cart?.items?.map((item, index) => (
-    <li key={index} className="flex items-center space-x-4">
-      <img
-        src={item.food.img}
-        alt={item.food.name}
-        className="w-14 h-14 object-cover rounded"
-      />
-      <div>
-        <p className="font-semibold">{item.food.name}</p>
-        <p>
-          {item.quantity} x {item.food.price.toLocaleString()}đ
-        </p>
-      </div>
-    </li>
-  ))}
-</ul>
+                  {order.cart?.items?.map((item, index) => (
+                    <li key={index} className="flex items-center space-x-4">
+                      <Image
+                        src={encodeImageUrl(item.food.img)}
+                        alt={item.food.name}
+                        width={56}
+                        height={56}
+                        className="object-cover rounded"
+                      />
+                      <div>
+                        <p className="font-semibold">{item.food.name}</p>
+                        <p>
+                          {item.quantity} x {item.food.price.toLocaleString()}đ
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}

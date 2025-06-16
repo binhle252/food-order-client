@@ -8,7 +8,8 @@ export default function CreateFoodPage() {
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [address, setAddress] = useState("");
-    const [img, setImg] = useState(""); // Thêm state cho URL hình ảnh
+    const [imgFile, setImgFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string>(""); // để hiển thị ảnh
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -26,14 +27,18 @@ export default function CreateFoodPage() {
     const handleFoodSubmit = async (e) => {
         e.preventDefault();
         try {
-            await createFood({
-                name,
-                price: Number(price),
-                address,
-                img, // Thêm img vào dữ liệu gửi đi
-                category_id: selectedCategory,
-            });
-            router.push("/foods"); // Hoặc đường dẫn sau khi tạo
+            const formData = new FormData();
+formData.append("name", name);
+formData.append("price", price);
+formData.append("address", address);
+formData.append("category_id", selectedCategory);
+if (imgFile) {
+  formData.append("img", imgFile); // 👈 tên "img" phải khớp với backend
+}
+
+await createFood(formData);
+
+            router.push("/dashboard/foods"); // Hoặc đường dẫn sau khi tạo
         } catch (err) {
             console.error("Lỗi khi thêm món ăn:", err);
         }
@@ -77,15 +82,25 @@ export default function CreateFoodPage() {
                 </div>
 
                 <div>
-                    <label className="block font-medium">Hình ảnh</label>
-                    <input
-                        type="text"
-                        value={img}
-                        onChange={(e) => setImg(e.target.value)}
-                        placeholder="URL hình ảnh"
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
+  <label className="block font-medium">Hình ảnh</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setImgFile(file);
+        setPreviewUrl(URL.createObjectURL(file)); // hiển thị ảnh tạm
+      }
+    }}
+    className="w-full p-2 border rounded"
+  />
+  {previewUrl && (
+  <div className="mt-2">
+    <img src={previewUrl} alt="Preview" className="w-40 h-40 object-cover rounded border" />
+  </div>
+)}
+</div>
 
                 <div>
                     <label className="block font-medium">Danh mục</label>
