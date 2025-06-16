@@ -25,7 +25,6 @@ export default function LoginPage() {
       const token = result?.data?.token;
       const role = result?.data?.role;
 
-
       console.log("Role:", role);
 
       if (!token || !role) {
@@ -41,7 +40,6 @@ export default function LoginPage() {
       } else {
         router.push("/user-home");
       }
-
     } catch (err: any) {
       setError(err?.message || "Đăng nhập thất bại");
     }

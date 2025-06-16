@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAccounts, getAccountDetail, deleteAccount } from "@/services/account.service";
+import {
+  getAccounts,
+  getAccountDetail,
+  deleteAccount,
+} from "@/services/account.service";
 
 export default function AdminAccountPage() {
   const [accounts, setAccounts] = useState([]);
@@ -46,27 +50,27 @@ export default function AdminAccountPage() {
   return (
     <div className="p-4 space-y-10">
       <div className="mb-4">
-  <label className="mr-2 font-medium">Lọc theo vai trò:</label>
-  <select
-    value={filterRole}
-    onChange={(e) => setFilterRole(e.target.value)}
-    className="border px-2 py-1 rounded"
-  >
-    <option value="all">Tất cả</option>
-    <option value="admin">Admin</option>
-    <option value="user">User</option>
-  </select>
-</div>
+        <label className="mr-2 font-medium">Lọc theo vai trò:</label>
+        <select
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+          className="border px-2 py-1 rounded"
+        >
+          <option value="all">Tất cả</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </div>
 
-<div>
-    <input
-      type="text"
-      placeholder="Tìm theo username..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="border px-2 py-1 rounded"
-    />
-  </div>
+      <div>
+        <input
+          type="text"
+          placeholder="Tìm theo username..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+      </div>
       <section>
         <h1 className="text-2xl font-bold mb-4">Quản lý tài khoản</h1>
         <table className="w-full border">
@@ -79,21 +83,31 @@ export default function AdminAccountPage() {
           </thead>
           <tbody>
             {accounts
-  .filter((acc) =>
-    (filterRole === "all" || acc.role === filterRole) &&
-    acc.username.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  .map((acc) => (
-    <tr key={acc._id} className="border-b">
-      <td className="p-2">{acc.username}</td>
-      <td className="p-2">{acc.role}</td>
-      <td className="p-2 space-x-2">
-        <button onClick={() => handleViewDetail(acc._id)} className="text-blue-500">Xem</button>
-        <button onClick={() => handleDelete(acc._id)} className="text-red-500">Xóa</button>
-      </td>
-    </tr>
-))}
-
+              .filter(
+                (acc) =>
+                  (filterRole === "all" || acc.role === filterRole) &&
+                  acc.username.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((acc) => (
+                <tr key={acc._id} className="border-b">
+                  <td className="p-2">{acc.username}</td>
+                  <td className="p-2">{acc.role}</td>
+                  <td className="p-2 space-x-2">
+                    <button
+                      onClick={() => handleViewDetail(acc._id)}
+                      className="text-blue-500"
+                    >
+                      Xem
+                    </button>
+                    <button
+                      onClick={() => handleDelete(acc._id)}
+                      className="text-red-500"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </section>
@@ -101,10 +115,18 @@ export default function AdminAccountPage() {
       {selectedAccount && (
         <section className="border p-4 rounded bg-gray-50">
           <h2 className="text-xl font-bold mb-2">Chi tiết tài khoản</h2>
-          <p><strong>Username:</strong> {selectedAccount.username}</p>
-          <p><strong>Role:</strong> {selectedAccount.role}</p>
-          <p><strong>Địa chỉ:</strong> {selectedAccount.address}</p>
-          <p><strong>SĐT:</strong> {selectedAccount.phone}</p>
+          <p>
+            <strong>Username:</strong> {selectedAccount.username}
+          </p>
+          <p>
+            <strong>Role:</strong> {selectedAccount.role}
+          </p>
+          <p>
+            <strong>Địa chỉ:</strong> {selectedAccount.address}
+          </p>
+          <p>
+            <strong>SĐT:</strong> {selectedAccount.phone}
+          </p>
         </section>
       )}
     </div>

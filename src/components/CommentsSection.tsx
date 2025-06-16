@@ -36,7 +36,10 @@ export default function CommentsSection({ foodId }) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
-        <button type="submit" className="bg-blue-500 text-white px-3 py-1 rounded">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+        >
           Gửi
         </button>
       </form>
@@ -47,7 +50,8 @@ export default function CommentsSection({ foodId }) {
         <ul className="space-y-2">
           {comments.map((comment) => (
             <li key={comment._id} className="border p-2 rounded">
-              <strong>{comment.user?.username || "Ẩn danh"}</strong>: {comment.content}
+              <strong>{comment.user?.username || "Ẩn danh"}</strong>:{" "}
+              {comment.content}
               <div className="text-sm text-gray-500">
                 {new Date(comment.createdAt).toLocaleString("vi-VN")}
               </div>

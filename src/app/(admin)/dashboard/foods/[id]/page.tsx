@@ -33,7 +33,11 @@ export default function FoodDetailPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const cartData = { account_id: accountId, food_id: food._id, quantity: 1 };
+      const cartData = {
+        account_id: accountId,
+        food_id: food._id,
+        quantity: 1,
+      };
       await addToCart(cartData);
       setMessage("🛒 Đã thêm vào giỏ hàng!");
       setTimeout(() => setMessage(""), 3000);
@@ -68,7 +72,9 @@ export default function FoodDetailPage({ params }: { params: { id: string } }) {
         </div>
         <div>
           <h1 className="text-3xl font-bold mb-2">{food.name}</h1>
-          <p className="text-2xl text-red-500 mb-4">{food.price.toLocaleString()}đ</p>
+          <p className="text-2xl text-red-500 mb-4">
+            {food.price.toLocaleString()}đ
+          </p>
           <p className="text-gray-600 mb-4">{food.description}</p>
           <p className="text-gray-500 mb-2">📍 {food.address}</p>
           <button

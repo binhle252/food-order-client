@@ -9,12 +9,12 @@ interface SearchContextType {
 
 const SearchContext = createContext<SearchContextType>({
   searchTerm: "",
-  setSearchTerm: () => {}
+  setSearchTerm: () => {},
 });
 
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   return (
     <SearchContext.Provider value={{ searchTerm, setSearchTerm }}>
       {children}

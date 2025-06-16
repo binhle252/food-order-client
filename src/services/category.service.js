@@ -6,7 +6,7 @@ export const createCategory = async (formData) => {
     body: formData, // gửi thẳng FormData
   });
   return res.json();
-}
+};
 
 export async function getCategory() {
   try {
@@ -28,7 +28,9 @@ export const updateCategory = async (id, formData) => {
 
 export async function deleteCategory(id) {
   try {
-    const result = await axios.delete(`http://localhost:5000/api/categories/${id}`);
+    const result = await axios.delete(
+      `http://localhost:5000/api/categories/${id}`
+    );
     return result.data;
   } catch (error) {
     console.error("Lỗi khi xóa danh mục:", error);

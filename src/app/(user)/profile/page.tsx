@@ -8,7 +8,11 @@ export default function UserProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({ username: "", phone: "", address: "" });
+  const [formData, setFormData] = useState({
+    username: "",
+    phone: "",
+    address: "",
+  });
   const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
@@ -49,20 +53,36 @@ export default function UserProfilePage() {
   };
 
   if (error) return <p className="text-red-500 text-center mt-5">{error}</p>;
-  if (!profile) return <p className="text-center mt-5">Đang tải thông tin...</p>;
+  if (!profile)
+    return <p className="text-center mt-5">Đang tải thông tin...</p>;
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
       <h1 className="text-2xl font-bold mb-4">Thông tin cá nhân</h1>
 
       <label className="block mb-2">Tên đăng nhập:</label>
-      <input name="username" value={formData.username} onChange={handleChange} className="input" />
+      <input
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+        className="input"
+      />
 
       <label className="block mt-4 mb-2">Số điện thoại:</label>
-      <input name="phone" value={formData.phone} onChange={handleChange} className="input" />
+      <input
+        name="phone"
+        value={formData.phone}
+        onChange={handleChange}
+        className="input"
+      />
 
       <label className="block mt-4 mb-2">Địa chỉ:</label>
-      <input name="address" value={formData.address} onChange={handleChange} className="input" />
+      <input
+        name="address"
+        value={formData.address}
+        onChange={handleChange}
+        className="input"
+      />
 
       <button
         onClick={handleSubmit}

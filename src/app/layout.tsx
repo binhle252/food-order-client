@@ -12,11 +12,17 @@ export const metadata = {
   description: "A delicious food ordering experience",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider> {/* ✅ AuthProvider bọc tất cả */}
+        <AuthProvider>
+          {" "}
+          {/* ✅ AuthProvider bọc tất cả */}
           <SearchProvider>
             <Header />
             <main className="pt-[var(--header-height)]">{children}</main>

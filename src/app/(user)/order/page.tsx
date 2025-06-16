@@ -34,7 +34,9 @@ export default function OrdersPage() {
   const encodeImageUrl = (img: string) => {
     if (img?.startsWith("http")) return img;
     if (!img) return "/default-image.jpg";
-    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
+    const encodedPath = img
+      .replace(/ /g, "%20")
+      .replace(/^\/Uploads\//, "/uploads/");
     return `${baseUrl}${encodedPath}`;
   };
 
@@ -81,16 +83,23 @@ export default function OrdersPage() {
               <div className="flex justify-between items-center mb-2">
                 <div>
                   <p className="font-semibold">🆔 Mã đơn: {order._id}</p>
-                  <p>🕒 Ngày đặt: {new Date(order.createdAt).toLocaleString()}</p>
+                  <p>
+                    🕒 Ngày đặt: {new Date(order.createdAt).toLocaleString()}
+                  </p>
                   <p>💳 Thanh toán: {order.payment_method}</p>
-                  <p>📦 Trạng thái: <span className="font-semibold">{order.status}</span></p>
+                  <p>
+                    📦 Trạng thái:{" "}
+                    <span className="font-semibold">{order.status}</span>
+                  </p>
                 </div>
                 <div className="text-right font-semibold">
                   Tổng tiền: {order.total_money.toLocaleString()}đ
                 </div>
               </div>
               <div>
-                <p className="mb-2">📍 Giao đến: {order.customer}, {order.phone}, {order.address}</p>
+                <p className="mb-2">
+                  📍 Giao đến: {order.customer}, {order.phone}, {order.address}
+                </p>
                 <ul className="space-y-2">
                   {order.cart?.items?.map((item, index) => (
                     <li key={index} className="flex items-center space-x-4">

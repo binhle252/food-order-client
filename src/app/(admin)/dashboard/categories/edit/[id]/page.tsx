@@ -50,7 +50,11 @@ export default function EditCategoryPage() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Sửa danh mục</h1>
-      <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        encType="multipart/form-data"
+      >
         <input
           type="text"
           value={name}
@@ -71,7 +75,10 @@ export default function EditCategoryPage() {
             className="w-32 h-32 object-cover rounded border"
           />
         )}
-        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
           Cập nhật
         </button>
       </form>

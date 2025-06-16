@@ -21,7 +21,10 @@ export async function createComment({ foodId, content }) {
     const res = await api.post("/comments", { foodId, content });
     return res.data;
   } catch (error) {
-    console.error("❌ Lỗi khi tạo bình luận:", error.response?.data?.message || error.message);
+    console.error(
+      "❌ Lỗi khi tạo bình luận:",
+      error.response?.data?.message || error.message
+    );
     throw error;
   }
 }
@@ -34,7 +37,10 @@ export async function getCommentsByFood(foodId) {
     const res = await api.get(`/comments/${foodId}`);
     return res.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy bình luận theo món ăn:", error.response?.data?.message || error.message);
+    console.error(
+      "❌ Lỗi khi lấy bình luận theo món ăn:",
+      error.response?.data?.message || error.message
+    );
     throw error;
   }
 }
@@ -47,7 +53,10 @@ export async function getComments() {
     const res = await api.get("/comments");
     return res.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy tất cả bình luận:", error.response?.data?.message || error.message);
+    console.error(
+      "❌ Lỗi khi lấy tất cả bình luận:",
+      error.response?.data?.message || error.message
+    );
     throw error;
   }
 }
@@ -60,7 +69,10 @@ export async function deleteComment(commentId) {
     const res = await api.delete(`/comments/${commentId}`);
     return res.data;
   } catch (error) {
-    console.error("❌ Lỗi khi xóa bình luận:", error.response?.data?.message || error.message);
+    console.error(
+      "❌ Lỗi khi xóa bình luận:",
+      error.response?.data?.message || error.message
+    );
     throw error;
   }
 }

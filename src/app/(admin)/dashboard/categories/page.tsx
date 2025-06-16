@@ -30,16 +30,18 @@ export default function AdminDashboardPage() {
       {/* Danh sách danh mục */}
       <section>
         <div className="mb-4">
-  <input
-    type="text"
-    placeholder="Tìm kiếm danh mục..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="border p-2 rounded w-full max-w-md"
-  />
-</div>
+          <input
+            type="text"
+            placeholder="Tìm kiếm danh mục..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 rounded w-full max-w-md"
+          />
+        </div>
         <h1 className="text-2xl font-bold mb-4">Danh sách danh mục</h1>
-        <Link href="/dashboard/categories/create" className="text-blue-500">+ Thêm danh mục</Link>
+        <Link href="/dashboard/categories/create" className="text-blue-500">
+          + Thêm danh mục
+        </Link>
         <table className="w-full mt-4 border">
           <thead>
             <tr className="border-b bg-gray-100">
@@ -50,35 +52,35 @@ export default function AdminDashboardPage() {
           </thead>
           <tbody>
             {categories
-    .filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .map((category) => (
-      <tr key={category._id} className="border-b">
-        <td className="p-2">{category.name}</td>
-        <td className="p-2">
-          <img
-            src={`http://localhost:5000${category.img}`}
-            alt={category.name}
-            className="h-12 w-12 object-cover rounded"
-          />
-        </td>
-        <td className="p-2">
-          <Link
-            href={`/dashboard/categories/edit/${category._id}`}
-            className="text-blue-500 mr-2"
-          >
-            Sửa
-          </Link>
-          <button
-            onClick={() => handleDeleteCategory(category._id)}
-            className="text-red-500"
-          >
-            Xóa
-          </button>
-        </td>
-      </tr>
-    ))}
+              .filter((category) =>
+                category.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((category) => (
+                <tr key={category._id} className="border-b">
+                  <td className="p-2">{category.name}</td>
+                  <td className="p-2">
+                    <img
+                      src={`http://localhost:5000${category.img}`}
+                      alt={category.name}
+                      className="h-12 w-12 object-cover rounded"
+                    />
+                  </td>
+                  <td className="p-2">
+                    <Link
+                      href={`/dashboard/categories/edit/${category._id}`}
+                      className="text-blue-500 mr-2"
+                    >
+                      Sửa
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteCategory(category._id)}
+                      className="text-red-500"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </section>

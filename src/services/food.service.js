@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
@@ -32,7 +31,10 @@ export async function createFood(formData) {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm món ăn:", error.response ? error.response.data : error.message);
+    console.error(
+      "Lỗi khi thêm món ăn:",
+      error.response ? error.response.data : error.message
+    );
     throw new Error("Lỗi khi thêm món ăn");
   }
 }
@@ -46,7 +48,10 @@ export async function updateFood(id, formData) {
   } catch (error) {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
-    console.error("Lỗi khi cập nhật món ăn:", error.response ? error.response.data : error.message);
+    console.error(
+      "Lỗi khi cập nhật món ăn:",
+      error.response ? error.response.data : error.message
+    );
     throw new Error("Lỗi khi cập nhật món ăn");
   }
 }

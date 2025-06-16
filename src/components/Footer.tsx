@@ -1,12 +1,7 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
-import { 
-  FaFacebookF, 
-  FaInstagram, 
-  FaYoutube, 
-  FaTiktok 
-} from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -58,16 +53,32 @@ export default function Footer() {
         <div className={styles.footerSection}>
           <h3 className={styles.sectionTitle}>KẾT NỐI VỚI CHÚNG TÔI</h3>
           <div className={styles.socialIcons}>
-            <Link href="https://facebook.com/anvatn7" target="_blank" aria-label="Facebook">
+            <Link
+              href="https://facebook.com/anvatn7"
+              target="_blank"
+              aria-label="Facebook"
+            >
               <FaFacebookF />
             </Link>
-            <Link href="https://instagram.com/anvatn7" target="_blank" aria-label="Instagram">
+            <Link
+              href="https://instagram.com/anvatn7"
+              target="_blank"
+              aria-label="Instagram"
+            >
               <FaInstagram />
             </Link>
-            <Link href="https://youtube.com/anvatn7" target="_blank" aria-label="YouTube">
+            <Link
+              href="https://youtube.com/anvatn7"
+              target="_blank"
+              aria-label="YouTube"
+            >
               <FaYoutube />
             </Link>
-            <Link href="https://tiktok.com/@anvatn7" target="_blank" aria-label="TikTok">
+            <Link
+              href="https://tiktok.com/@anvatn7"
+              target="_blank"
+              aria-label="TikTok"
+            >
               <FaTiktok />
             </Link>
           </div>

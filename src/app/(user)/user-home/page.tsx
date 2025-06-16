@@ -28,7 +28,9 @@ export default function Home() {
   const { searchTerm } = useSearch();
   const [categories, setCategories] = useState<Category[]>([]);
   const [foods, setFoods] = useState<Food[]>([]);
-  const [currentCategoryID, setCurrentCategoryID] = useState<string | undefined>(undefined);
+  const [currentCategoryID, setCurrentCategoryID] = useState<
+    string | undefined
+  >(undefined);
   const [allFoods, setAllFoods] = useState<Food[]>([]);
   const [message, setMessage] = useState<string>("");
   const baseUrl = "http://localhost:5000"; // Base URL của backend

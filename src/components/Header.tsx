@@ -1,14 +1,14 @@
 "use client";
 
-import styles from './Header.module.css';
-import Link from 'next/link';
-import { Pacifico } from 'next/font/google';
+import styles from "./Header.module.css";
+import Link from "next/link";
+import { Pacifico } from "next/font/google";
 import { useSearch } from "./SearchContext";
 import { useAuth } from "@/contexts/AuthContext"; // dùng context
 
 const pacifico = Pacifico({
-  subsets: ['vietnamese'],
-  weight: '400',
+  subsets: ["vietnamese"],
+  weight: "400",
 });
 
 export default function Header() {
@@ -60,22 +60,22 @@ export default function Header() {
             </>
           ) : (
             <>
-      <Link href="/cart" className={styles.navButton}>
-        🛒 Giỏ hàng
-      </Link>
+              <Link href="/cart" className={styles.navButton}>
+                🛒 Giỏ hàng
+              </Link>
 
-      {/* ✅ Thêm link Đơn hàng tại đây */}
-      <Link href="/order" className={styles.navButton}>
-        📦 Đơn hàng
-      </Link>
+              {/* ✅ Thêm link Đơn hàng tại đây */}
+              <Link href="/order" className={styles.navButton}>
+                📦 Đơn hàng
+              </Link>
 
-      <Link href="/profile" className={styles.navButton}>
-        👤 Thông tin tài khoản
-      </Link>
-      <button onClick={handleLogout} className={styles.navButton}>
-        🚪 Đăng xuất
-      </button>
-    </>
+              <Link href="/profile" className={styles.navButton}>
+                👤 Thông tin tài khoản
+              </Link>
+              <button onClick={handleLogout} className={styles.navButton}>
+                🚪 Đăng xuất
+              </button>
+            </>
           )}
         </div>
       </nav>

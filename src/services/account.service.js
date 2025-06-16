@@ -37,7 +37,10 @@ export async function register(accountData) {
     const result = await api.post("/accounts/register", accountData);
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi đăng ký tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi đăng ký tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -56,7 +59,10 @@ export async function login(loginData) {
 
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi đăng nhập:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi đăng nhập:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -66,7 +72,10 @@ export async function getAccounts() {
     const result = await api.get("/accounts");
     return result.data.data; // 👈 Trả về mảng thực sự
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi lấy danh sách tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -76,7 +85,10 @@ export async function getAccountDetail(id) {
     const result = await api.get(`/accounts/${id}`);
     return result.data.data;
   } catch (error) {
-    console.error("Lỗi khi lấy chi tiết tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi lấy chi tiết tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -86,7 +98,10 @@ export async function createAccount(accountData) {
     const result = await api.post("/accounts", accountData);
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi tạo tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi tạo tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -96,7 +111,10 @@ export async function updateAccount(id, accountData) {
     const result = await api.put(`/accounts/${id}`, accountData);
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi cập nhật tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -106,7 +124,10 @@ export async function deleteAccount(id) {
     const result = await api.delete(`/accounts/${id}`);
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi xóa tài khoản:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi xóa tài khoản:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -116,7 +137,10 @@ export async function getUserProfile() {
     const result = await api.get("/accounts/profile");
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin người dùng:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi lấy thông tin người dùng:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }
@@ -126,7 +150,10 @@ export async function updateUserProfile(data) {
     const result = await api.put("/accounts/profile", data);
     return result.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật thông tin cá nhân:", error.response?.data?.message || error.message);
+    console.error(
+      "Lỗi khi cập nhật thông tin cá nhân:",
+      error.response?.data?.message || error.message
+    );
     throw error.response?.data || error;
   }
 }

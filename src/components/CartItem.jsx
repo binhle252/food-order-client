@@ -20,16 +20,22 @@ export default function CartItem({ item, onUpdate, onDelete }) {
         <button
           onClick={() => handleUpdate(Math.max(1, quantity - 1))}
           className="px-2 py-1 bg-gray-300 rounded"
-        >-</button>
+        >
+          -
+        </button>
         <span>{quantity}</span>
         <button
           onClick={() => handleUpdate(quantity + 1)}
           className="px-2 py-1 bg-gray-300 rounded"
-        >+</button>
+        >
+          +
+        </button>
         <button
           onClick={() => onDelete(item._id)}
           className="text-red-500 ml-3"
-        >X</button>
+        >
+          X
+        </button>
       </div>
     </div>
   );

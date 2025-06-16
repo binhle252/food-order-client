@@ -41,7 +41,9 @@ export default function CartPage() {
   const encodeImageUrl = (img: string) => {
     if (img?.startsWith("http")) return img;
     if (!img) return "/default-image.jpg";
-    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
+    const encodedPath = img
+      .replace(/ /g, "%20")
+      .replace(/^\/Uploads\//, "/uploads/");
     return `${baseUrl}${encodedPath}`;
   };
 
@@ -54,7 +56,9 @@ export default function CartPage() {
     setAccountId(accId);
     try {
       const cart = await getCart(accId);
-      const validItems = (cart.items || []).filter((item: any) => item.food !== null);
+      const validItems = (cart.items || []).filter(
+        (item: any) => item.food !== null
+      );
       setCartItems(validItems);
       setCartId(cart._id);
     } catch (err) {
@@ -87,69 +91,70 @@ export default function CartPage() {
   };
 
   const handleCheckout = async () => {
-  if (!accountId || !cartItems.length || !cartId) return;
-  if (!customer || !phone || !address) {
-    setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
-    return;
-  }
-
-  if (paymentMethod === "Online") {
-  try {
-    const response = await fetch("http://localhost:5000/api/momo/create_momo_payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: totalPrice,
-        orderInfo: "Thanh toán đơn hàng food app qua MoMo",
-        customer,
-        phone,
-        address,
-        cart_id: cartId,
-      }),
-    });
-    const data = await response.json();
-    if (response.ok && data.payUrl) {
-  window.location.href = data.payUrl; // ✅ redirect đúng URL
-} else {
-  setMessage(data.message || "Không thể tạo thanh toán qua MoMo.");
-}
-  } catch (err) {
-    console.error(err);
-    setMessage("Lỗi khi tạo thanh toán MoMo.");
-  }
-
-  } else {
-    // Thanh toán khi nhận hàng
-    try {
-      const response = await fetch("http://localhost:5000/api/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer,
-          phone,
-          address,
-          payment_method: paymentMethod,
-          total_money: totalPrice,
-          cart_id: cartId,
-        }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage("✅ Đặt hàng thành công!");
-        setCartItems([]);
-        setCustomer("");
-        setPhone("");
-        setAddress("");
-      } else {
-        setMessage(data.message || "Lỗi khi đặt hàng.");
-      }
-    } catch (error) {
-      console.error("Lỗi khi đặt hàng:", error);
-      setMessage("Đã xảy ra lỗi khi đặt hàng.");
+    if (!accountId || !cartItems.length || !cartId) return;
+    if (!customer || !phone || !address) {
+      setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
+      return;
     }
-  }
-};
 
+    if (paymentMethod === "Online") {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/momo/create_momo_payment",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: totalPrice,
+              orderInfo: "Thanh toán đơn hàng food app qua MoMo",
+              customer,
+              phone,
+              address,
+              cart_id: cartId,
+            }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok && data.payUrl) {
+          window.location.href = data.payUrl; // ✅ redirect đúng URL
+        } else {
+          setMessage(data.message || "Không thể tạo thanh toán qua MoMo.");
+        }
+      } catch (err) {
+        console.error(err);
+        setMessage("Lỗi khi tạo thanh toán MoMo.");
+      }
+    } else {
+      // Thanh toán khi nhận hàng
+      try {
+        const response = await fetch("http://localhost:5000/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer,
+            phone,
+            address,
+            payment_method: paymentMethod,
+            total_money: totalPrice,
+            cart_id: cartId,
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setMessage("✅ Đặt hàng thành công!");
+          setCartItems([]);
+          setCustomer("");
+          setPhone("");
+          setAddress("");
+        } else {
+          setMessage(data.message || "Lỗi khi đặt hàng.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi đặt hàng:", error);
+        setMessage("Đã xảy ra lỗi khi đặt hàng.");
+      }
+    }
+  };
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.food.price * item.quantity,

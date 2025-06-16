@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -28,7 +27,9 @@ export default function EditFoodPage() {
   const encodeImageUrl = (img: string) => {
     if (img?.startsWith("http")) return img;
     if (!img) return "/default-image.jpg";
-    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
+    const encodedPath = img
+      .replace(/ /g, "%20")
+      .replace(/^\/Uploads\//, "/uploads/");
     return `${baseUrl}${encodedPath}`;
   };
 
@@ -57,23 +58,23 @@ export default function EditFoodPage() {
   }, [params.id]);
 
   const handleFoodSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("address", address);
-    formData.append("category_id", selectedCategory);
-    if (imgFile) {
-      formData.append("img", imgFile);
-    }
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("address", address);
+      formData.append("category_id", selectedCategory);
+      if (imgFile) {
+        formData.append("img", imgFile);
+      }
 
-    await updateFood(params.id as string, formData);
-    router.push("/dashboard/foods");
-  } catch (err) {
-    console.error("Error updating food:", err); // Dòng 74
-  }
-};
+      await updateFood(params.id as string, formData);
+      router.push("/dashboard/foods");
+    } catch (err) {
+      console.error("Error updating food:", err); // Dòng 74
+    }
+  };
 
   return (
     <div className="p-4 max-w-xl mx-auto">
