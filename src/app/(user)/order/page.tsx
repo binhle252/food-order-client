@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getOrderByAccount } from "@/services/order.service";
 import jwt from "jsonwebtoken";
 import Image from "next/image";
+import styles from "../../../styles/OrdersPage.module.css"; 
 
 interface Order {
   _id: string;
@@ -12,7 +13,7 @@ interface Order {
   address: string;
   total_money: number;
   payment_method: string;
-  status: string;
+  status: string; // Trạng thái sẽ là "pending", "confirm", "shipping", "received"
   createdAt: string;
   cart: {
     items: {
@@ -39,12 +40,13 @@ export default function OrdersPage() {
   };
 
   const getAccountIdFromToken = () => {
-    const token = localStorage.getItem("token");
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
     if (!token || typeof token !== "string") return null;
     try {
       const decoded: any = jwt.decode(token);
       return decoded?.id || decoded?.account_id;
     } catch (err) {
+      console.error("Lỗi giải mã token:", err);
       return null;
     }
   };
@@ -52,15 +54,20 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     const accountId = getAccountIdFromToken();
     if (!accountId) {
-      setMessage("Vui lòng đăng nhập.");
+      setMessage("Vui lòng đăng nhập để xem lịch sử đơn hàng.");
       return;
     }
     try {
       const data = await getOrderByAccount(accountId);
-      setOrders(data);
+      // Sắp xếp đơn hàng theo ngày tạo mới nhất (createdAt)
+      const sortedOrders = data.sort((a: Order, b: Order) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setOrders(sortedOrders);
+      setMessage(""); // Clear any previous error message
     } catch (error) {
       console.error("Lỗi khi lấy đơn hàng:", error);
-      setMessage("Lỗi kết nối đến máy chủ.");
+      setMessage("Lỗi kết nối đến máy chủ hoặc không thể tải đơn hàng.");
     }
   };
 
@@ -68,49 +75,101 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
+  // Hàm để trả về class CSS tương ứng với trạng thái đơn hàng
+  const getStatusClassName = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return styles.statusPending;
+      case "confirm": // Đã cập nhật từ "confirmed"
+        return styles.statusConfirmed;
+      case "shipping": // Đã cập nhật từ "delivering"
+        return styles.statusDelivering;
+      case "received": // Đã cập nhật từ "completed"
+        return styles.statusCompleted;
+      case "cancelled": // Giữ nguyên nếu bạn có trạng thái "cancelled"
+        return styles.statusCancelled;
+      default:
+        return ""; // Mặc định không có style nếu không khớp
+    }
+  };
+
+  // Hàm để chuyển đổi trạng thái tiếng Anh sang tiếng Việt kèm icon
+  const getVietnameseStatus = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "🕒 Đang chờ xử lý";
+      case "confirm":
+        return "✔️ Đã xác nhận";
+      case "shipping":
+        return "🚚 Đang giao hàng";
+      case "received":
+        return "🏆 Đã nhận hàng";
+      case "cancelled":
+        return "❌ Đã hủy";
+      default:
+        return status;
+    }
+  };
+
+  const getDisplayOrderId = (orderId: string) => {
+    // Lấy 8 ký tự cuối của chuỗi ID và thêm prefix "DH"
+    return `DH${orderId.slice(-8).toUpperCase()}`; 
+  };
+
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-4">
-      <h1 className="text-2xl font-bold mb-6">📦 Lịch sử đơn hàng</h1>
-      {message && <p className="text-red-500 mb-4">{message}</p>}
+    <div className={styles.ordersContainer}>
+      <h1 className={styles.ordersTitle}>📋 Lịch sử đơn hàng</h1> {/* Đã thay đổi icon */}
+      {message && <p className={styles.message}>{message}</p>}
+
       {orders.length === 0 ? (
-        <p>Chưa có đơn hàng nào.</p>
+        <p className={styles.noOrders}>Chưa có đơn hàng nào.</p>
       ) : (
-        <div className="space-y-6">
+        <div className={styles.ordersList}>
           {orders.map((order) => (
-            <div key={order._id} className="border rounded shadow p-4">
-              <div className="flex justify-between items-center mb-2">
-                <div>
-                  <p className="font-semibold">🆔 Mã đơn: {order._id}</p>
-                  <p>🕒 Ngày đặt: {new Date(order.createdAt).toLocaleString()}</p>
-                  <p>💳 Thanh toán: {order.payment_method}</p>
-                  <p>📦 Trạng thái: <span className="font-semibold">{order.status}</span></p>
+            <div key={order._id} className={styles.orderItem}>
+              <div className={styles.orderHeader}>
+                <div className={styles.orderInfo}>
+                  <p className={styles.orderId}>
+                    🆔 Mã đơn: <span>{getDisplayOrderId(order._id)}</span>
+                  </p>
+                  <p>🕒 Ngày đặt: <span>{new Date(order.createdAt).toLocaleString("vi-VN")}</span></p>
+                  <p>💳 Phương thức thanh toán: <span>{order.payment_method}</span></p>
+                  <p>📦 Trạng thái: 
+                    <span className={`${styles.orderStatus} ${getStatusClassName(order.status)}`}>
+                      {getVietnameseStatus(order.status)} {/* Sử dụng hàm mới ở đây */}
+                    </span>
+                  </p>
                 </div>
-                <div className="text-right font-semibold">
-                  Tổng tiền: {order.total_money.toLocaleString()}đ
+                <div className={styles.orderTotal}>
+                  Tổng tiền: {order.total_money.toLocaleString("vi-VN")}đ
                 </div>
               </div>
-              <div>
-                <p className="mb-2">📍 Giao đến: {order.customer}, {order.phone}, {order.address}</p>
-                <ul className="space-y-2">
-                  {order.cart?.items?.map((item, index) => (
-                    <li key={index} className="flex items-center space-x-4">
-                      <Image
-                        src={encodeImageUrl(item.food.img)}
-                        alt={item.food.name}
-                        width={56}
-                        height={56}
-                        className="object-cover rounded"
-                      />
-                      <div>
-                        <p className="font-semibold">{item.food.name}</p>
-                        <p>
-                          {item.quantity} x {item.food.price.toLocaleString()}đ
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+
+              <div className={styles.deliveryInfo}>
+                <p>📍 Giao đến: <span>{order.customer}</span></p>
+                <p>📞 Điện thoại: <span>{order.phone}</span></p>
+                <p>🏠 Địa chỉ: <span>{order.address}</span></p>
               </div>
+
+              <ul className={styles.itemsList}>
+                {order.cart?.items?.map((item, index) => (
+                  <li key={index} className={styles.itemDetail}>
+                    <Image
+                      src={encodeImageUrl(item.food.img)}
+                      alt={item.food.name}
+                      width={60}
+                      height={60}
+                      className={styles.itemImage}
+                    />
+                    <div>
+                      <p className={styles.itemName}>{item.food.name}</p>
+                      <p className={styles.itemQuantityPrice}>
+                        {item.quantity} x {item.food.price.toLocaleString("vi-VN")}đ
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>

@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <AuthProvider> {/* ✅ AuthProvider bọc tất cả */}
+        <AuthProvider> {}
           <SearchProvider>
             <Header />
             <main className="pt-[var(--header-height)]">{children}</main>

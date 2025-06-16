@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUserProfile, updateUserProfile } from "@/services/account.service";
+import styles from "../../../styles/UserProfilePage.module.css";
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -20,58 +21,121 @@ export default function UserProfilePage() {
       }
 
       try {
-        const res = await getUserProfile();
-        setProfile(res.data);
-        setFormData({
-          username: res.data.username || "",
-          phone: res.data.phone || "",
-          address: res.data.address || "",
-        });
+        // Đảm bảo không gọi API quá nhiều lần nếu component re-render
+        if (!profile) { // Chỉ fetch nếu profile chưa có
+            const res = await getUserProfile();
+            setProfile(res.data);
+            setFormData({
+                username: res.data.username || "",
+                phone: res.data.phone || "",
+                address: res.data.address || "",
+            });
+        }
       } catch (err: any) {
-        setError(err.message || "Không thể tải thông tin người dùng");
+        console.error("Lỗi khi tải thông tin người dùng:", err);
+        setError(err.message || "Không thể tải thông tin người dùng.");
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [profile, router]); // Thêm profile và router vào dependency array
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Xóa thông báo thành công hoặc lỗi khi người dùng bắt đầu chỉnh sửa lại
+    if (successMsg) setSuccessMsg("");
+    if (error) setError("");
   };
 
   const handleSubmit = async () => {
+    setError(""); // Reset lỗi
+    setSuccessMsg(""); // Reset thông báo thành công
+
+    // Basic validation
+    if (!formData.username.trim()) {
+      setError("Tên đăng nhập không được để trống.");
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setError("Số điện thoại không được để trống.");
+      return;
+    }
+    if (!formData.address.trim()) {
+      setError("Địa chỉ không được để trống.");
+      return;
+    }
+    
+    // Optional: phone number format validation
+    const phoneRegex = /^[0-9]{10,11}$/; // Ví dụ: 10 hoặc 11 chữ số
+    if (!phoneRegex.test(formData.phone.trim())) {
+      setError("Số điện thoại không hợp lệ. Vui lòng nhập 10 hoặc 11 chữ số.");
+      return;
+    }
+
+
     try {
       await updateUserProfile(formData);
-      setSuccessMsg("Cập nhật thành công!");
-    } catch (err) {
-      setError("Lỗi khi cập nhật");
+      setSuccessMsg("Cập nhật thông tin thành công!");
+      // Có thể refresh profile sau khi cập nhật nếu cần (ít cần thiết nếu dữ liệu hiển thị là formData)
+      // fetchProfile(); 
+    } catch (err: any) {
+      console.error("Lỗi khi cập nhật profile:", err);
+      setError(err.response?.data?.message || "Lỗi khi cập nhật thông tin.");
     }
   };
 
-  if (error) return <p className="text-red-500 text-center mt-5">{error}</p>;
-  if (!profile) return <p className="text-center mt-5">Đang tải thông tin...</p>;
+  if (error && !profile) return <p className={styles.errorMessage}>{error}</p>; // Hiển thị lỗi ban đầu
+  if (!profile) return <p className={styles.loadingMessage}>Đang tải thông tin...</p>; // Hiển thị loading
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Thông tin cá nhân</h1>
+    <div className={styles.profileContainer}>
+      <h1 className={styles.profileTitle}>✨ Thông tin cá nhân</h1> {/* Đổi icon nếu muốn */}
 
-      <label className="block mb-2">Tên đăng nhập:</label>
-      <input name="username" value={formData.username} onChange={handleChange} className="input" />
+      {error && <p className={styles.errorMessage}>{error}</p>}
+      {successMsg && <p className={styles.successMessage}>{successMsg}</p>}
 
-      <label className="block mt-4 mb-2">Số điện thoại:</label>
-      <input name="phone" value={formData.phone} onChange={handleChange} className="input" />
+      <div className={styles.formGroup}>
+        <label htmlFor="username" className={styles.label}>Tên đăng nhập:</label>
+        <input 
+          type="text"
+          id="username"
+          name="username" 
+          value={formData.username} 
+          onChange={handleChange} 
+          className={styles.input} 
+        />
+      </div>
 
-      <label className="block mt-4 mb-2">Địa chỉ:</label>
-      <input name="address" value={formData.address} onChange={handleChange} className="input" />
+      <div className={styles.formGroup}>
+        <label htmlFor="phone" className={styles.label}>Số điện thoại:</label>
+        <input 
+          type="text" // Đôi khi dùng "tel" cho ngữ nghĩa, nhưng "text" cũng được
+          id="phone"
+          name="phone" 
+          value={formData.phone} 
+          onChange={handleChange} 
+          className={styles.input} 
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="address" className={styles.label}>Địa chỉ:</label>
+        <input 
+          type="text"
+          id="address"
+          name="address" 
+          value={formData.address} 
+          onChange={handleChange} 
+          className={styles.input} 
+        />
+      </div>
 
       <button
         onClick={handleSubmit}
-        className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        className={styles.submitButton}
       >
-        Cập nhật
+        Cập nhật thông tin
       </button>
-
-      {successMsg && <p className="text-green-500 mt-4">{successMsg}</p>}
     </div>
   );
 }

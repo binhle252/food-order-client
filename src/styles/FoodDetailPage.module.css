@@ -1,0 +1,168 @@
+.container {
+    max-width: 1000px; /* Tăng kích thước tổng thể */
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.loadingMessage {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr; /* Mặc định 1 cột trên mobile */
+    gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .contentGrid {
+        grid-template-columns: 1fr 1fr; /* 2 cột trên desktop */
+    }
+}
+
+.imageWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem; /* Khoảng cách quanh ảnh */
+    background-color: #f9f9f9; /* Nền nhẹ cho phần ảnh */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Bóng đổ cho khung ảnh */
+}
+
+.foodImage {
+    width: 100%;
+    height: auto;
+    max-height: 500px; /* Giới hạn chiều cao ảnh */
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.foodImage:hover {
+    transform: scale(1.02); /* Hiệu ứng phóng to nhẹ khi hover */
+}
+
+.detailsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.foodName {
+    font-size: 2.8rem; /* Tên món ăn lớn hơn */
+    font-weight: 800; /* Rất đậm */
+    color: #333;
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+}
+
+.foodPrice {
+    font-size: 2.4rem; /* Giá lớn hơn */
+    font-weight: 700;
+    color: #e67e22; /* Màu cam nổi bật */
+    margin-bottom: 1.5rem;
+}
+
+.foodDescription {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.foodAddress {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.addToCartButton {
+    background-color: #28a745; /* Màu xanh lá cây */
+    color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px; /* Nút bo tròn */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: inline-flex; /* Cho phép icon và text nằm ngang */
+    align-items: center;
+    gap: 0.8rem;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3); /* Bóng đổ cho nút */
+}
+
+.addToCartButton:hover {
+    background-color: #218838; /* Màu xanh đậm hơn khi hover */
+    transform: translateY(-3px); /* Hiệu ứng nhấc nhẹ */
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+}
+
+.addToCartButton:active {
+    transform: translateY(0);
+}
+
+.commentsSection {
+    margin-top: 3.5rem; /* Khoảng cách lớn hơn cho phần bình luận */
+    padding-top: 2.5rem;
+    border-top: 1px solid #eee; /* Đường phân cách */
+}
+
+.message {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background-color: #333; /* Nền tối cho thông báo */
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Đảm bảo luôn hiển thị trên cùng */
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+    }
+
+    .foodName {
+        font-size: 2rem;
+    }
+
+    .foodPrice {
+        font-size: 1.8rem;
+    }
+
+    .foodDescription {
+        font-size: 1rem;
+    }
+
+    .addToCartButton {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+    }
+
+    .commentsSection {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+    }
+}
