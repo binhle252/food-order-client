@@ -87,11 +87,39 @@ export default function CartPage() {
   };
 
   const handleCheckout = async () => {
-    if (!accountId || !cartItems.length || !cartId) return;
-    if (!customer || !phone || !address) {
-      setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
-      return;
-    }
+  if (!accountId || !cartItems.length || !cartId) return;
+  if (!customer || !phone || !address) {
+    setMessage("Vui lòng điền đầy đủ thông tin giao hàng.");
+    return;
+  }
+
+  if (paymentMethod === "Online") {
+  try {
+    const response = await fetch("http://localhost:5000/api/momo/create_momo_payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: totalPrice,
+        orderInfo: "Thanh toán đơn hàng food app qua MoMo",
+        customer,
+        phone,
+        address,
+        cart_id: cartId,
+      }),
+    });
+    const data = await response.json();
+    if (response.ok && data.payUrl) {
+  window.location.href = data.payUrl; // ✅ redirect đúng URL
+} else {
+  setMessage(data.message || "Không thể tạo thanh toán qua MoMo.");
+}
+  } catch (err) {
+    console.error(err);
+    setMessage("Lỗi khi tạo thanh toán MoMo.");
+  }
+
+  } else {
+    // Thanh toán khi nhận hàng
     try {
       const response = await fetch("http://localhost:5000/api/order", {
         method: "POST",
@@ -116,10 +144,12 @@ export default function CartPage() {
         setMessage(data.message || "Lỗi khi đặt hàng.");
       }
     } catch (error) {
-      console.error("Lỗi khi thanh toán:", error);
+      console.error("Lỗi khi đặt hàng:", error);
       setMessage("Đã xảy ra lỗi khi đặt hàng.");
     }
-  };
+  }
+};
+
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.food.price * item.quantity,
