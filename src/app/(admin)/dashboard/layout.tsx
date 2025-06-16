@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
@@ -11,6 +12,14 @@ export default function DashboardLayout({ children }) {
     localStorage.removeItem("role");
     router.push("/login");
   };
+
+  useEffect(() => {
+    const role = localStorage.getItem("role"); // hoặc lấy từ context
+    if (role !== "admin") {
+      router.push("/403"); // Trang báo lỗi hoặc redirect về trang thường
+    }
+  }, []);
+
 
   return (
     <div className="flex min-h-screen">

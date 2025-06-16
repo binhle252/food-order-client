@@ -8,36 +8,15 @@ import CommentsSection from "@/components/CommentsSection";
 import jwt from "jsonwebtoken";
 import { useParams } from "next/navigation";
 
-interface Food {
-  _id: string;
-  name: string;
-  price: number;
-  img: string;
-  description: string;
-  address: string;
-}
-
 export default function FoodDetailPage() {
   const { id } = useParams();
   const [food, setFood] = useState<Food | null>(null);
   const [message, setMessage] = useState<string>("");
-  const baseUrl = "http://localhost:5000";
-
-  const encodeImageUrl = (img: string) => {
-    if (img?.startsWith("http")) return img;
-    if (!img) return "/default-image.jpg";
-    const encodedPath = img.replace(/ /g, "%20").replace(/^\/Uploads\//, "/uploads/");
-    return `${baseUrl}${encodedPath}`;
-  };
 
   useEffect(() => {
     async function fetchDetail() {
-      try {
-        const data = await getFoodDetail(id as string);
-        setFood(data);
-      } catch (err) {
-        setMessage("Không thể tải chi tiết món ăn.");
-      }
+      const data = await getFoodDetail(id as string);
+      setFood(data);
     }
     if (id) {
       fetchDetail();
@@ -47,6 +26,7 @@ export default function FoodDetailPage() {
   const getAccountIdFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token || typeof token !== "string") return null;
+
     try {
       const decoded: any = jwt.decode(token);
       if (typeof decoded !== "object" || decoded === null) return null;
@@ -64,6 +44,7 @@ export default function FoodDetailPage() {
       setTimeout(() => setMessage(""), 3000);
       return;
     }
+
     try {
       await addToCart({
         account_id: accountId,
@@ -88,7 +69,7 @@ export default function FoodDetailPage() {
       <div className="grid md:grid-cols-2 gap-8">
         <div>
           <Image
-            src={encodeImageUrl(food.img)}
+            src={food.img}
             alt={food.name}
             width={500}
             height={500}
@@ -110,9 +91,13 @@ export default function FoodDetailPage() {
           </button>
         </div>
       </div>
+
+      {/* 🗨️ Component bình luận */}
       <div className="mt-10">
         <CommentsSection foodId={food._id} />
       </div>
+
+      {/* Thông báo */}
       {message && (
         <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
           {message}

@@ -60,16 +60,22 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/cart" className={styles.navButton}>
-                🛒 Giỏ hàng
-              </Link>
-              <Link href="/profile" className={styles.navButton}>
-                👤 Thông tin tài khoản
-              </Link>
-              <button onClick={handleLogout} className={styles.navButton}>
-                🚪 Đăng xuất
-              </button>
-            </>
+      <Link href="/cart" className={styles.navButton}>
+        🛒 Giỏ hàng
+      </Link>
+
+      {/* ✅ Thêm link Đơn hàng tại đây */}
+      <Link href="/order" className={styles.navButton}>
+        📦 Đơn hàng
+      </Link>
+
+      <Link href="/profile" className={styles.navButton}>
+        👤 Thông tin tài khoản
+      </Link>
+      <button onClick={handleLogout} className={styles.navButton}>
+        🚪 Đăng xuất
+      </button>
+    </>
           )}
         </div>
       </nav>

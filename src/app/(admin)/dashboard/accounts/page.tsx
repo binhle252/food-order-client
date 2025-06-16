@@ -6,6 +6,8 @@ import { getAccounts, getAccountDetail, deleteAccount } from "@/services/account
 export default function AdminAccountPage() {
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [filterRole, setFilterRole] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchAccounts();
@@ -43,6 +45,28 @@ export default function AdminAccountPage() {
 
   return (
     <div className="p-4 space-y-10">
+      <div className="mb-4">
+  <label className="mr-2 font-medium">Lọc theo vai trò:</label>
+  <select
+    value={filterRole}
+    onChange={(e) => setFilterRole(e.target.value)}
+    className="border px-2 py-1 rounded"
+  >
+    <option value="all">Tất cả</option>
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+  </select>
+</div>
+
+<div>
+    <input
+      type="text"
+      placeholder="Tìm theo username..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="border px-2 py-1 rounded"
+    />
+  </div>
       <section>
         <h1 className="text-2xl font-bold mb-4">Quản lý tài khoản</h1>
         <table className="w-full border">
@@ -54,26 +78,22 @@ export default function AdminAccountPage() {
             </tr>
           </thead>
           <tbody>
-            {accounts.map((acc) => (
-              <tr key={acc._id} className="border-b">
-                <td className="p-2">{acc.username}</td>
-                <td className="p-2">{acc.role}</td>
-                <td className="p-2 space-x-2">
-                  <button
-                    onClick={() => handleViewDetail(acc._id)}
-                    className="text-blue-500"
-                  >
-                    Xem
-                  </button>
-                  <button
-                    onClick={() => handleDelete(acc._id)}
-                    className="text-red-500"
-                  >
-                    Xóa
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {accounts
+  .filter((acc) =>
+    (filterRole === "all" || acc.role === filterRole) &&
+    acc.username.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  .map((acc) => (
+    <tr key={acc._id} className="border-b">
+      <td className="p-2">{acc.username}</td>
+      <td className="p-2">{acc.role}</td>
+      <td className="p-2 space-x-2">
+        <button onClick={() => handleViewDetail(acc._id)} className="text-blue-500">Xem</button>
+        <button onClick={() => handleDelete(acc._id)} className="text-red-500">Xóa</button>
+      </td>
+    </tr>
+))}
+
           </tbody>
         </table>
       </section>
