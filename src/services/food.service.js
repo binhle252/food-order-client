@@ -44,6 +44,8 @@ export async function updateFood(id, formData) {
     });
     return response.data;
   } catch (error) {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
     console.error("Lỗi khi cập nhật món ăn:", error.response ? error.response.data : error.message);
     throw new Error("Lỗi khi cập nhật món ăn");
   }

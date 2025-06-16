@@ -1,13 +1,11 @@
 import axios from "axios";
 
-export async function createCategory(categoryData) {
-  try {
-    const result = await axios.post("http://localhost:5000/api/categories", categoryData);
-    return result.data;
-  } catch (error) {
-    console.error("Lỗi khi tạo danh mục:", error);
-    throw error;
-  }
+export const createCategory = async (formData) => {
+  const res = await fetch("http://localhost:5000/api/categories", {
+    method: "POST",
+    body: formData, // gửi thẳng FormData
+  });
+  return res.json();
 }
 
 export async function getCategory() {
@@ -20,15 +18,13 @@ export async function getCategory() {
   }
 }
 
-export async function updateCategory(id, categoryData) {
-  try {
-    const result = await axios.put(`http://localhost:5000/api/categories/${id}`, categoryData);
-    return result.data;
-  } catch (error) {
-    console.error("Lỗi khi cập nhật danh mục:", error);
-    throw error;
-  }
-}
+export const updateCategory = async (id, formData) => {
+  const res = await fetch(`http://localhost:5000/api/categories/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+  return res.json();
+};
 
 export async function deleteCategory(id) {
   try {

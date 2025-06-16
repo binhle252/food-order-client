@@ -43,7 +43,11 @@ export default function AdminDashboardPage() {
               <tr key={category._id} className="border-b">
                 <td className="p-2">{category.name}</td>
                 <td className="p-2">
-                  <img src={category.img} alt={category.name} className="h-12 w-12 object-cover rounded" />
+                  <img
+  src={`http://localhost:5000${category.img}`}
+  alt={category.name}
+  className="h-12 w-12 object-cover rounded"
+/>
                 </td>
                 <td className="p-2">
                   <Link href={`/dashboard/categories/edit/${category._id}`} className="text-blue-500 mr-2">Sửa</Link>
