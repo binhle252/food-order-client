@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./Header.module.css";
+import styles from "../styles/Header.module.css";
 import Link from "next/link";
 import { Pacifico } from "next/font/google";
 import { useSearch } from "./SearchContext";
@@ -60,20 +60,17 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/cart" className={styles.navButton}>
-                🛒 Giỏ hàng
-              </Link>
-
-              {/* ✅ Thêm link Đơn hàng tại đây */}
               <Link href="/order" className={styles.navButton}>
-                📦 Đơn hàng
+                Order
               </Link>
-
+              <Link href="/cart" className={styles.navButton}>
+                Giỏ hàng
+              </Link>
               <Link href="/profile" className={styles.navButton}>
-                👤 Thông tin tài khoản
+                Thông tin tài khoản
               </Link>
               <button onClick={handleLogout} className={styles.navButton}>
-                🚪 Đăng xuất
+                Đăng xuất
               </button>
             </>
           )}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUserProfile, updateUserProfile } from "@/services/account.service";
+import styles from "../../../styles/UserProfilePage.module.css";
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function UserProfilePage() {
     address: "",
   });
   const [successMsg, setSuccessMsg] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -43,55 +45,73 @@ export default function UserProfilePage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const isValidPhoneNumber = (phone: string): boolean => {
+    const regex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+    return regex.test(phone);
+  };
+
   const handleSubmit = async () => {
+    if (!isValidPhoneNumber(formData.phone)) {
+  setPhoneError("Số điện thoại không hợp lệ");
+  return;
+} else {
+  setPhoneError("");
+}
     try {
       await updateUserProfile(formData);
       setSuccessMsg("Cập nhật thành công!");
+      setError("");
     } catch (err) {
       setError("Lỗi khi cập nhật");
+      setSuccessMsg("");
     }
   };
 
-  if (error) return <p className="text-red-500 text-center mt-5">{error}</p>;
+  if (error) return <p className={styles.errorMessage}>{error}</p>;
+
   if (!profile)
-    return <p className="text-center mt-5">Đang tải thông tin...</p>;
+    return <p className={styles.loadingMessage}>Đang tải thông tin...</p>;
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Thông tin cá nhân</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Thông tin cá nhân</h1>
 
-      <label className="block mb-2">Tên đăng nhập:</label>
-      <input
-        name="username"
-        value={formData.username}
-        onChange={handleChange}
-        className="input"
-      />
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Tên đăng nhập:</label>
+        <input
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          className={styles.input}
+        />
+      </div>
 
-      <label className="block mt-4 mb-2">Số điện thoại:</label>
-      <input
-        name="phone"
-        value={formData.phone}
-        onChange={handleChange}
-        className="input"
-      />
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Số điện thoại:</label>
+        <input
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          className={styles.input}
+        />
+      </div>
 
-      <label className="block mt-4 mb-2">Địa chỉ:</label>
-      <input
-        name="address"
-        value={formData.address}
-        onChange={handleChange}
-        className="input"
-      />
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Địa chỉ:</label>
+        <input
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          className={styles.input}
+        />
+      </div>
 
-      <button
-        onClick={handleSubmit}
-        className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
+      <button onClick={handleSubmit} className={styles.button}>
         Cập nhật
       </button>
+      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
 
-      {successMsg && <p className="text-green-500 mt-4">{successMsg}</p>}
+      {successMsg && <p className={styles.successMessage}>{successMsg}</p>}
     </div>
   );
 }
