@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
 
   const handleLogout = () => {
-    Cookies.remove("token");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     router.push("/login");
   };
 
@@ -53,6 +53,22 @@ export default function DashboardLayout({ children }) {
                 Thống kê doanh thu
               </Link>
             </li>
+            <li>
+              <Link
+                href="/dashboard/accounts"
+                className="block p-2 rounded hover:bg-gray-700"
+              >
+                Quản lý tài khoản
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard/comments"
+                className="block p-2 rounded hover:bg-gray-700"
+              >
+                Quản lý bình luận
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="p-4 border-t border-gray-700">
@@ -66,9 +82,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100">
-        {children}
-      </main>
+      <main className="flex-1 p-6 bg-gray-100">{children}</main>
     </div>
   );
 }
